@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "595223059555",
+    "project_id": "mynotes-udayjain",
+    "storage_bucket": "mynotes-udayjain.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:595223059555:android:ac4b81f7ab0e70e553ec56",
+        "android_client_info": {
+          "package_name": "me.udayjain.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASKmwkBzIc11UdmUSChJ8Yj8l0Na4FBP4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
