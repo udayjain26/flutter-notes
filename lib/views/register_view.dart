@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mynotes/firebase_options.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -31,58 +29,47 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'Email',
-                    ),
-                  ),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    decoration: const InputDecoration(
-                      hintText: 'Password',
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final email = _emailController.text;
-                      final password = _passwordController.text;
-                      try {
-                        final userCredential = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: email, password: password);
-                        print(userCredential);
-                      } on FirebaseAuthException catch (e) {
-                        print(e.code);
-                      } catch (e) {
-                        print(e);
-                      }
-                    },
-                    child: const Text('Register'),
-                  ),
-                ],
-              );
-            default:
-              return const Text('Loading...');
-          }
-        },
+      appBar: AppBar(title: const Text('Register')),
+      body: Column(
+        children: [
+          TextField(
+            controller: _emailController,
+            autocorrect: false,
+            enableSuggestions: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              hintText: 'Email',
+            ),
+          ),
+          TextField(
+            controller: _passwordController,
+            obscureText: true,
+            autocorrect: false,
+            enableSuggestions: false,
+            decoration: const InputDecoration(
+              hintText: 'Password',
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = _emailController.text;
+              final password = _passwordController.text;
+              try {
+                final userCredential = await FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: email, password: password);
+              } on FirebaseAuthException catch (e) {
+              } catch (e) {}
+            },
+            child: const Text('Register'),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login/', (route) => false);
+              },
+              child: const Text('Login here!')),
+        ],
       ),
     );
   }
