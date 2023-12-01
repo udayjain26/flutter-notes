@@ -62,10 +62,18 @@ class _LoginViewState extends State<LoginView> {
                     email: email, password: password);
                 if (!context.mounted) return;
 
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notesRoute,
-                  (route) => false,
-                );
+                final user = FirebaseAuth.instance.currentUser;
+                if (user?.emailVerified ?? false) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    verifyEmailRoute,
+                    (route) => false,
+                  );
+                }
               } on FirebaseAuthException catch (e) {
                 if (!context.mounted) return;
                 // devtools.log(e.code.toString());
@@ -78,6 +86,11 @@ class _LoginViewState extends State<LoginView> {
                   await showErrorDialog(
                     context,
                     'Invalid Email Address',
+                  );
+                } else if (e.code == 'channel-error') {
+                  await showErrorDialog(
+                    context,
+                    'Error: Missing Required Fields',
                   );
                 } else {
                   await showErrorDialog(

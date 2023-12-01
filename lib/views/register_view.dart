@@ -60,6 +60,12 @@ class _RegisterViewState extends State<RegisterView> {
               try {
                 await FirebaseAuth.instance.createUserWithEmailAndPassword(
                     email: email, password: password);
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+                if (!context.mounted) return;
+                Navigator.of(context).pushNamed(
+                  verifyEmailRoute,
+                );
                 if (!context.mounted) return;
               } on FirebaseAuthException catch (e) {
                 if (!context.mounted) return;
@@ -78,6 +84,11 @@ class _RegisterViewState extends State<RegisterView> {
                   await showErrorDialog(
                     context,
                     'Invalid email',
+                  );
+                } else if (e.code == 'channel-error') {
+                  await showErrorDialog(
+                    context,
+                    'Error: Missing Required Fields',
                   );
                 } else {
                   await showErrorDialog(
