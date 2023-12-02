@@ -258,7 +258,8 @@ class NotesService {
     if (results.isEmpty) {
       throw CouldNotFindUserException();
     } else {
-      return DatabaseUser.fromRow(results.first);
+      final x = DatabaseUser.fromRow(results.first);
+      return x;
     }
   }
 }
@@ -273,8 +274,8 @@ class DatabaseUser {
   });
 
   DatabaseUser.fromRow(Map<String, Object?> map)
-      : id = map['idColumn'] as int,
-        email = map['emailColumn'] as String;
+      : id = map[idColumn] as int,
+        email = map[emailColumn] as String;
 
   @override
   String toString() {
@@ -323,13 +324,13 @@ class DatabaseNote {
 }
 
 const dbName = 'notes.db';
-const userTable = 'users';
+const userTable = 'user';
 const noteTable = 'note';
 const idColumn = 'id';
 const emailColumn = 'email';
-const userIdColumn = 'userId';
+const userIdColumn = 'user_id';
 const textColumn = 'text';
-const isSyncedColumn = 'isSynced';
+const isSyncedColumn = 'is_synced';
 
 const createNoteTable = '''
         CREATE TABLE IF NOT EXISTS "note" (
