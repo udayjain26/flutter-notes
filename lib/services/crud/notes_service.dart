@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mynotes/extensions/list/filter.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
@@ -11,6 +12,8 @@ class NotesService {
   Database? _db;
 
   List<DatabaseNote> _notes = [];
+
+  DatabaseUser? _user;
 
   NotesService._sharedInstance() {
     _notesStreamController =
@@ -27,17 +30,33 @@ class NotesService {
 
   late final StreamController<List<DatabaseNote>> _notesStreamController;
 
-  Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
+  Stream<List<DatabaseNote>> get allNotes =>
+      _notesStreamController.stream.filter((note) {
+        final currentUser = _user;
+        if (currentUser != null) {
+          return note.userId == currentUser.id;
+        } else {
+          throw UserShouldBeSetBeforeReadingAllNotesException();
+        }
+      });
 
   Future<DatabaseUser> getOrCreateuser({
     required String email,
+    bool setAsCurrentuser = true,
   }) async {
     await ensureDBIsOpen();
     try {
       final user = await getUser(email: email);
+      if (setAsCurrentuser) {
+        _user = user;
+      }
       return user;
     } on CouldNotFindUserException {
-      return createUser(email: email);
+      final createdUser = await createUser(email: email);
+      if (setAsCurrentuser) {
+        _user = createdUser;
+      }
+      return createdUser;
     } catch (e) {
       rethrow;
     }
@@ -114,10 +133,15 @@ class NotesService {
     final db = _getDatabaseOrThrow();
     await getNote(id: note.id);
 
-    final updateCount = await db.update(noteTable, {
-      textColumn: text,
-      isSyncedColumn: 0,
-    });
+    final updateCount = await db.update(
+      noteTable,
+      {
+        textColumn: text,
+        isSyncedColumn: 0,
+      },
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
 
     if (updateCount == 0) {
       throw CouldNotUpdateNoteException();

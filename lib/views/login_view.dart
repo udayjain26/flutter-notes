@@ -89,7 +89,7 @@ class _LoginViewState extends State<LoginView> {
               } on GenericAuthException {
                 await showErrorDialog(
                   context,
-                  'Authenitcation Error',
+                  'Authenitcation Error: check your internet connection',
                 );
               }
             },

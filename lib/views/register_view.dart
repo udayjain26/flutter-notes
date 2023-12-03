@@ -91,7 +91,7 @@ class _RegisterViewState extends State<RegisterView> {
               } on GenericAuthException {
                 await showErrorDialog(
                   context,
-                  'Authentication Error',
+                  'Authentication Error: Check you internet connection',
                 );
               }
             },
