@@ -4,6 +4,8 @@ import 'package:mynotes/services/auth/auth_user.dart';
 import 'package:mynotes/services/auth/auth_provider.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 
+import 'dart:developer' as dev;
+
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 
@@ -77,9 +79,11 @@ class FirebaseAuthProvider implements AuthProvider {
       } else if (e.code == 'channel-error') {
         throw MissingRequiredFieldsAuthException();
       } else {
+        dev.log(e.toString());
         throw GenericAuthException();
       }
     } catch (e) {
+      dev.log(e.toString());
       throw GenericAuthException();
     }
   }
@@ -108,5 +112,23 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<void> initialize() async {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'firebase-auth/user-not-found':
+          throw UserNotFoundException();
+        case 'firebase-auth/invalid-email':
+          throw InvalidEmailAuthException();
+        default:
+          throw GenericAuthException();
+      }
+    } catch (_) {
+      throw GenericAuthException();
+    }
   }
 }

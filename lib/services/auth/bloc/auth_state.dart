@@ -17,8 +17,7 @@ class AuthStateUninitalized extends AuthState {
 class AuthStateRegistering extends AuthState {
   final Exception? exception;
 
-  const AuthStateRegistering(
-      {required this.exception, required super.isLoading});
+  const AuthStateRegistering({this.exception, required super.isLoading});
 }
 
 class AuthStateLoggedOut extends AuthState with EquatableMixin {
@@ -40,4 +39,11 @@ class AuthStateLoggedIn extends AuthState {
 
 class AuthStateNeedsVerification extends AuthState {
   const AuthStateNeedsVerification({required super.isLoading});
+}
+
+class AuthStateForgotPassword extends AuthState {
+  final Exception? exception;
+  final bool hasSentEmail;
+  const AuthStateForgotPassword(
+      {this.exception, required this.hasSentEmail, required super.isLoading});
 }
